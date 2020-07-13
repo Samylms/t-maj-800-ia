@@ -418,9 +418,10 @@ def chat():
 @cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
 def report():
     print(classification_result)
-    dictclassification_result = classification_result.head().to_dict()
-    result = dictclassification_result
-    return result
+    #dictclassification_result = classification_result.head().to_dict()
+    #result = dictclassification_result
+    #return result
+    return classification_result.to_json()
 
 
 if __name__ == "__main__":

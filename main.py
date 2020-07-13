@@ -409,9 +409,14 @@ X_test_col_ordered.sum().plot.bar(ax=ax[1], title="Predicted events")
 
 # In[31]:
 
-@app.route('/', methods=['GET'])
+@app.route('/chat', methods=['GET'])
 @cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
-def result():
+def chat():
+    return 'Hello from chat!'
+
+@app.route('/report', methods=['GET'])
+@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
+def report():
     print(classification_result)
     dictclassification_result = classification_result.head().to_dict()
     result = dictclassification_result

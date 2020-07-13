@@ -18,9 +18,10 @@ import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 import matplotlib.pyplot as plt
 from flask import Flask  # pip install flask
-import json
-app = Flask(__name__)
+from flask_cors import CORS
 
+app = Flask(__name__)
+CORS(app)
 # ### Get data (X) and events (y) from CSV file
 
 # In[2]:
@@ -405,11 +406,13 @@ X_test_col_ordered.sum().plot.bar(ax=ax[1], title="Predicted events")
 # In[31]:
 
 @app.route("/")
+
 def result():
     print(classification_result)
-    print(check_accuracy(X_train_col_ordered, y_train_col_ordered))
-    dictclassification_result =  classification_result.head().to_dict()
-    return dictclassification_result
+    dictclassification_result = classification_result.head().to_dict()
+    result = dictclassification_result
+    return result
+
 
 if __name__ == "__main__":
     app.run()

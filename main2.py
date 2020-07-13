@@ -14,14 +14,18 @@
 # In[1]:
 
 
+import logging
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 import matplotlib.pyplot as plt
 from flask import Flask  # pip install flask
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 CORS(app)
+#app.config['CORS_HEADERS'] = 'Content-Type'
+#cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 # ### Get data (X) and events (y) from CSV file
 
 # In[2]:
@@ -405,8 +409,8 @@ X_test_col_ordered.sum().plot.bar(ax=ax[1], title="Predicted events")
 
 # In[31]:
 
-@app.route("/")
-
+@app.route('/', methods=['GET'])
+@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
 def result():
     print(classification_result)
     dictclassification_result = classification_result.head().to_dict()
@@ -415,6 +419,7 @@ def result():
 
 
 if __name__ == "__main__":
-    app.run()
+    logging.getLogger('flask_cors').level = logging.DEBUG
+    app.run(host = '0.0.0.0')
 
 # In[ ]:

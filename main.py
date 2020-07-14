@@ -461,12 +461,12 @@ pairs = [
         ["To create a new field: first make sur to be on the Dashboard tab, then select the Polygon tool (on the top-left corner of the map) and simply draw over it."]
     ],
     [
-        r"how (.*) (login|connect)?",
-        ["To login:"]
+        r"how (.*) login?",
+        ["To login: click on the Login link on the left of the page, and then enter the email/password you used during registration."]
     ],
     [
-        r"how (.*) (sign up|register|create account)?",
-        ["To register:"]
+        r"how (.*) register?",
+        ["To register: click the Login link on the left of this page, then click on Sign up, just below the big button. Fill in the form with your first name, last name, email, username and password. Click the Sign up now to complete the registration process. You will now be able to login."]
     ],
     [
         r"(.*) fog (.*) today?",

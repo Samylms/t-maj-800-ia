@@ -465,6 +465,27 @@ def thunderstorm_sentence():
         return "Yes, thunderstorm is expected for today, stay safe."
     return "No thunderstorm for today."
 
+def weather_sentence():
+    if percentage_in_column("None") > 0.9:
+        return "Today will be a beautiful and sunny day."
+    events = []
+    if percentage_in_column("Thunderstorm") > 0.1:
+        events.append("a thunderstorm")
+    if percentage_in_column("Snow") > 0.2:
+        events.append("some snow")
+    if percentage_in_column("None") > 0.2:
+        events.append("some fog")
+    if percentage_in_column("None") > 0.3:
+        events.append("rain")
+    sentence = "Expect "
+    for i in range(0, len(events)):
+        if i > 0 and i < len(events) - 1:
+            sentence += ", "
+        elif i == len(events) - 1:
+            sentence += " and "
+        sentence += events[i]
+    return sentence + " today."
+
 pairs = [
     [
         r"how (.*) (create|add) (.*) field?",
@@ -497,6 +518,10 @@ pairs = [
     [
         r"(.*)(thunder|thunderstorm)(.*)today?",
         [thunderstorm_sentence()]
+    ],
+    [
+        r"what(.*)weather(.*)today?",
+        [weather_sentence()]
     ],
 ]
 

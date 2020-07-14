@@ -18,8 +18,9 @@ import logging
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 import matplotlib.pyplot as plt
-from flask import Flask  # pip install flask
+from flask import Flask, request  # pip install flask
 from flask_cors import CORS, cross_origin
+from nltk.chat.util import Chat, reflections
 
 app = Flask(__name__)
 CORS(app)
@@ -405,14 +406,9 @@ y_test_col_ordered = y_test.reindex(sorted(y_train.columns), axis=1)
 fig, ax = plt.subplots(1, 2, figsize=(15, 5))
 y_test_col_ordered.sum().plot.bar(ax=ax[0], title="Real events that happened")
 X_test_col_ordered.sum().plot.bar(ax=ax[1], title="Predicted events")
-
+print(X_test_col_ordered)
 
 # In[31]:
-
-@app.route('/chat', methods=['GET'])
-@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
-def chat():
-    return 'Hello from chat!'
 
 @app.route('/report', methods=['GET'])
 @cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
@@ -423,6 +419,28 @@ def report():
     #return result
     return classification_result.to_json()
 
+# Chatbot related stuff
+
+create_field_message = "To create a new field: first make sur to be on the Dashboard tab, then select the Polygon tool (on the top-left corner of the map) and simply draw it over the map."
+pairs = [
+    [
+        r"how (to|do i|can i|could i|should i) (create|add) (a|a new) field?",
+        [create_field_message,]
+    ],
+]
+
+@app.route('/chat', methods=['GET'])
+@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
+def chat():
+    args = request.args
+    if 'message' in args:
+        message = args['message'].lower()
+        chat = Chat(pairs, reflections)
+        reply = chat.respond(message)
+        if reply is None:
+            return "Sorry, I don\'t understand. Could you rephrase please?"
+        return reply
+    return 'Don\'t be shy!'
 
 if __name__ == "__main__":
     logging.getLogger('flask_cors').level = logging.DEBUG

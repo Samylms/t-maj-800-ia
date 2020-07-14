@@ -21,6 +21,7 @@ import matplotlib.pyplot as plt
 from flask import Flask, request  # pip install flask
 from flask_cors import CORS, cross_origin
 from nltk.chat.util import Chat, reflections
+import random
 
 app = Flask(__name__)
 CORS(app)
@@ -406,7 +407,6 @@ y_test_col_ordered = y_test.reindex(sorted(y_train.columns), axis=1)
 fig, ax = plt.subplots(1, 2, figsize=(15, 5))
 y_test_col_ordered.sum().plot.bar(ax=ax[0], title="Real events that happened")
 X_test_col_ordered.sum().plot.bar(ax=ax[1], title="Predicted events")
-print(X_test_col_ordered)
 
 # In[31]:
 
@@ -421,12 +421,76 @@ def report():
 
 # Chatbot related stuff
 
-create_field_message = "To create a new field: first make sur to be on the Dashboard tab, then select the Polygon tool (on the top-left corner of the map) and simply draw it over the map."
+def percentage_in_column(col_name):
+    col = list(X_test_col_ordered[col_name].values)
+    return col.count(True) / len(col)
+
+def fog_sentence():
+    percentage = percentage_in_column("Fog")
+    if percentage > 0.5:
+        return "Yes, the fog will be dense today."
+    if percentage > 0.2:
+        return "Yes, a bit of fog is expected today."
+    return "No fog is expected for today."
+
+def rain_sentence():
+    percentage = percentage_in_column("Rain")
+    if percentage > 0.5:
+        return "Yes, rain will fall a lot today."
+    if percentage > 0.2:
+        return "Yes, rain will fall a little today."
+    return "Rain is not expected for today."
+
+def snow_sentence():
+    percentage = percentage_in_column("Snow")
+    if percentage > 0.5:
+        return "Yes, snow will fall a lot today."
+    if percentage > 0.2:
+        return "Yes, snow will fall a little today."
+    return "Snow is not expected for today."
+
+def thunderstorm_sentence():
+    percentage = percentage_in_column("Thunderstorm")
+    if percentage > 0:
+        return "Yes, thunderstorm is expected for today, stay safe."
+    return "No thunderstorm for today."
+
 pairs = [
     [
-        r"how (to|do i|can i|could i|should i) (create|add) (a|a new) field?",
-        [create_field_message,]
+        r"how (.*) (create|add) (.*) field?",
+        ["To create a new field: first make sur to be on the Dashboard tab, then select the Polygon tool (on the top-left corner of the map) and simply draw over it."]
     ],
+    [
+        r"how (.*) (login|connect)?",
+        ["To login:"]
+    ],
+    [
+        r"how (.*) (sign up|register|create account)?",
+        ["To register:"]
+    ],
+    [
+        r"(.*) fog (.*) today?",
+        [fog_sentence()]
+    ],
+    [
+        r"(.*) rain (.*) today?",
+        [rain_sentence()]
+    ],
+    [
+        r"(.*) snow (.*) today?",
+        [snow_sentence()]
+    ],
+    [
+        r"(.*) (thunder|thunderstorm) (.*) today?",
+        [thunderstorm_sentence()]
+    ],
+]
+
+failure_messages = [
+    "Sorry, I don\'t understand. Could you rephrase please?",
+    "What?",
+    "Could you say this using different words please?",
+    "Be more precise with your request please."
 ]
 
 @app.route('/chat', methods=['GET'])
@@ -438,7 +502,7 @@ def chat():
         chat = Chat(pairs, reflections)
         reply = chat.respond(message)
         if reply is None:
-            return "Sorry, I don\'t understand. Could you rephrase please?"
+            return random.choice(failure_messages)
         return reply
     return 'Don\'t be shy!'
 

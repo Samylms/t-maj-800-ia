@@ -449,6 +449,16 @@ def snow_sentence():
         return "Yes, snow will fall a little today."
     return "Snow is not expected for today."
 
+def sun_sentence():
+    percentage = percentage_in_column("None")
+    if percentage < 0.2:
+        return "The sun will not show up today"
+    elif percentage < 0.5:
+        return "Not a very sunny day today."
+    elif percentage < 0.8:
+        return "Sky will be pretty clear today."
+    return "Sky will be perfectly clear today."
+
 def thunderstorm_sentence():
     percentage = percentage_in_column("Thunderstorm")
     if percentage > 0:
@@ -469,19 +479,23 @@ pairs = [
         ["To register: click the Login link on the left of this page, then click on Sign up, just below the big button. Fill in the form with your first name, last name, email, username and password. Click the Sign up now to complete the registration process. You will now be able to login."]
     ],
     [
-        r"(.*) fog (.*) today?",
+        r"will (.*) fog (.*) today?",
         [fog_sentence()]
     ],
     [
-        r"(.*) rain (.*) today?",
+        r"will (.*) (rain|rainy) (.*) today?",
         [rain_sentence()]
     ],
     [
-        r"(.*) snow (.*) today?",
+        r"will (.*) (snow|snowy) (.*) today?",
         [snow_sentence()]
     ],
     [
-        r"(.*) (thunder|thunderstorm) (.*) today?",
+        r"will (.*) (sun|sunny) (.*) today?",
+        [sun_sentence()]
+    ],
+    [
+        r"will (.*) (thunder|thunderstorm) (.*) today?",
         [thunderstorm_sentence()]
     ],
 ]

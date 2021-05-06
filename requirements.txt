@@ -12,7 +12,7 @@ decorator==4.4.2
 defusedxml==0.6.0
 entrypoints==0.3
 flask==1.1.2
-flask_cors==3.0.8
+flask_cors==3.0.9
 future==0.18.2
 gast==0.2.2
 google-auth==1.14.1
